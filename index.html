@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Go + WebAssembly Example</title>
+
+    <link rel="stylesheet" href="garamond.css" >
+</head>
+
+<body>
+    <canvas width="300" height="220" style="border: 1pt solid black;">typeset paragraph</canvas>
+
+    <div class="slider">
+        <input type="range" min="0" max="800" value="300" oninput="rangeValue.innerText = this.value;drawtext(this.value); ">
+        <p>Horizontal Size: <span id="rangeValue">300</span> pt</p>
+    </div>
+
+    <script src="wasm_exec.js"></script>
+    <script src="renderer.js"></script>
+
+</body>
+
+</html>
