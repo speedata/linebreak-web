@@ -17,9 +17,6 @@ import (
 //go:embed fonts/garamond/CormorantGaramond-Regular.ttf
 var f embed.FS
 
-var str = `In olden times when wishing still helped one, there lived a king whose daughters were all beautiful, but the youngest
-was so beautiful that the sun itself, which has seen so much, was astonished whenever it shone in her face.`
-
 func mknodelist(fnt *font.Font, atoms []font.Atom) node.Node {
 	var head, cur node.Node
 	var lastglue node.Node
@@ -100,7 +97,6 @@ func getHPositions(ypos bag.ScaledPoint, vl node.Node) []position {
 		case *node.Glue:
 			xpos += t.Width
 		case *node.Glyph:
-			// fmt.Printf(`~~> xpos %s`+"\n", xpos)
 			glyphs = append(glyphs, position{t.Components, xpos, ypos})
 			xpos += t.Width
 		case *node.Kern:
@@ -112,7 +108,7 @@ func getHPositions(ypos bag.ScaledPoint, vl node.Node) []position {
 	return glyphs
 }
 
-func getPositions(width string) ([]position, error) {
+func getPositions(text string, width string) ([]position, error) {
 	pdf := baseline.NewPDFWriter(io.Discard)
 	data, err := f.ReadFile("fonts/garamond/CormorantGaramond-Regular.ttf")
 	if err != nil {
@@ -126,7 +122,7 @@ func getPositions(width string) ([]position, error) {
 
 	fnt := font.NewFont(face, bag.MustSp("20pt"))
 
-	atoms := fnt.Shape(str, []harfbuzz.Feature{})
+	atoms := fnt.Shape(text, []harfbuzz.Feature{})
 	nl := mknodelist(fnt, atoms)
 	nl, _ = node.AppendLineEndAfter(nl, node.Tail(nl))
 	settings := node.NewLinebreakSettings()
@@ -137,23 +133,27 @@ func getPositions(width string) ([]position, error) {
 	return g, nil
 }
 
-func returnList() js.Func {
+func returnGetPositions() js.Func {
 	jsFunc := js.FuncOf(func(this js.Value, args []js.Value) any {
-		wd := "240"
-		if len(args) > 0 {
-			firstarg := args[0]
-			switch firstarg.Type() {
-			case js.TypeNumber:
-				wd = fmt.Sprintf("%d", args[0].Int())
-			case js.TypeString:
-				wd = args[0].String()
-			}
+		if len(args) < 1 {
+			fmt.Println("getpositions requires one argument")
+			return nil
 		}
-		x := []any{}
-		g, err := getPositions(wd)
+		firstArg := args[0]
+		text := firstArg.Get("text").String()
+		widthAny := firstArg.Get("width")
+		wd := "240"
+		switch widthAny.Type() {
+		case js.TypeNumber:
+			wd = fmt.Sprintf("%d", widthAny.Int())
+		case js.TypeString:
+			wd = widthAny.String()
+		}
+		g, err := getPositions(text, wd)
 		if err != nil {
 			panic("this should not happen")
 		}
+		x := []any{}
 
 		for _, i := range g {
 			obj := map[string]any{
@@ -169,6 +169,6 @@ func returnList() js.Func {
 }
 
 func main() {
-	js.Global().Set("getpositions", returnList())
+	js.Global().Set("getpositions", returnGetPositions())
 	<-make(chan bool)
 }

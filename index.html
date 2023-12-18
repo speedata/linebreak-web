@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>Go + WebAssembly Example</title>
+    <title>boxes and glue linebrak tester</title>
 
     <link rel="stylesheet" href="garamond.css" >
 </head>
@@ -12,9 +12,11 @@
     <canvas width="300" height="220" style="border: 1pt solid black;">typeset paragraph</canvas>
 
     <div class="slider">
-        <input type="range" min="0" max="800" value="300" oninput="rangeValue.innerText = this.value;drawtext(this.value); ">
+        <input id="inputhsize" type="range" min="0" max="800" value="300" oninput="rangeValue.innerText = this.value;drawtext(); ">
         <p>Horizontal Size: <span id="rangeValue">300</span> pt</p>
     </div>
+
+    <textarea id="rendertext" rows="10" cols="50" onkeyup="drawtext()">In olden times when wishing still helped one, there lived a king whose daughters were all beautiful, but the youngest was so beautiful that the sun itself, which has seen so much, was astonished whenever it shone in her face.</textarea>
 
     <script src="wasm_exec.js"></script>
     <script src="renderer.js"></script>
