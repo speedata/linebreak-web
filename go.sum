@@ -1,5 +1,7 @@
 github.com/benoitkugler/textlayout-testdata v0.1.1 h1:AvFxBxpfrQd8v55qH59mZOJOQjtD6K2SFe9/HvnIbJk=
 github.com/benoitkugler/textlayout-testdata v0.1.1/go.mod h1:i/qZl09BbUOtd7Bu/W1CAubRwTWrEXWq6JwMkw8wYxo=
+github.com/google/uuid v1.3.0 h1:t6JiXgmwXMjEs8VusXIJk2BXHsn+wx8BZdTaoZ5fu7I=
+github.com/google/uuid v1.3.0/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
 github.com/speedata/baseline-pdf v0.0.0-20231122102911-d3b0bd534820 h1:7oxf+dMF062+vl2NXMOa9AEG2eQw5jo+UPh2QtbEeKE=
 github.com/speedata/baseline-pdf v0.0.0-20231122102911-d3b0bd534820/go.mod h1:ptfWHTOg/v3zstZUxF9DwET4q4NOMCGyzDvtm11SIWs=
 github.com/speedata/boxesandglue v0.0.0-20231122103605-3435f2a32a56 h1:+amh8JA0yCZmRvnQpHfJrX7yd4IAe5i6hLC3eWvncJg=

@@ -1,4 +1,4 @@
-module linebreakweb
+module github.com/speedata/linebreakweb
 
 go 1.21.0
 
@@ -9,6 +9,7 @@ require (
 )
 
 require (
+	github.com/google/uuid v1.3.0 // indirect
 	github.com/speedata/gofpdi v1.0.18 // indirect
 	github.com/speedata/hyphenation v1.0.1 // indirect
 	golang.org/x/image v0.7.0 // indirect

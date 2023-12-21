@@ -5,12 +5,14 @@ import (
 	_ "embed"
 	"fmt"
 	"io"
+	"strconv"
 	"syscall/js"
 
 	baseline "github.com/speedata/baseline-pdf"
 	"github.com/speedata/boxesandglue/backend/bag"
 	"github.com/speedata/boxesandglue/backend/font"
 	"github.com/speedata/boxesandglue/backend/node"
+	"github.com/speedata/boxesandglue/frontend"
 	"github.com/speedata/textlayout/harfbuzz"
 )
 
@@ -53,6 +55,11 @@ func mknodelist(fnt *font.Font, atoms []font.Atom) node.Node {
 			}
 		}
 	}
+	l, err := frontend.GetLanguage("en")
+	if err != nil {
+		return nil
+	}
+	frontend.Hyphenate(head, l)
 	return head
 }
 
@@ -108,7 +115,12 @@ func getHPositions(ypos bag.ScaledPoint, vl node.Node) []position {
 	return glyphs
 }
 
-func getPositions(text string, width string) ([]position, error) {
+type retinfo struct {
+	positions []position
+	height    bag.ScaledPoint
+}
+
+func getPositions(settings *node.LinebreakSettings, text string, fontsize bag.ScaledPoint) (*retinfo, error) {
 	pdf := baseline.NewPDFWriter(io.Discard)
 	data, err := f.ReadFile("fonts/garamond/CormorantGaramond-Regular.ttf")
 	if err != nil {
@@ -120,17 +132,61 @@ func getPositions(text string, width string) ([]position, error) {
 		return nil, err
 	}
 
-	fnt := font.NewFont(face, bag.MustSp("20pt"))
+	fnt := font.NewFont(face, fontsize)
 
 	atoms := fnt.Shape(text, []harfbuzz.Feature{})
 	nl := mknodelist(fnt, atoms)
 	nl, _ = node.AppendLineEndAfter(nl, node.Tail(nl))
-	settings := node.NewLinebreakSettings()
-	settings.LineHeight = bag.MustSp("24pt")
-	settings.HSize = bag.MustSp(width + "pt")
 	vl, _ := node.Linebreak(nl, settings)
-	g := getVPositions(bag.MustSp("20pt"), vl)
-	return g, nil
+	g := getVPositions(fontsize, vl)
+
+	ri := &retinfo{
+		positions: g,
+		height:    vl.Height + vl.Depth,
+	}
+	return ri, nil
+}
+
+func parseInt(val js.Value) int {
+	switch val.Type() {
+	case js.TypeNumber:
+		return val.Int()
+	case js.TypeString:
+		num, err := strconv.Atoi(val.String())
+		if err != nil {
+			return 1
+		}
+		return num
+	}
+	return 1
+}
+
+func parseFloat(val js.Value) float64 {
+	switch val.Type() {
+	case js.TypeNumber:
+		return val.Float()
+	case js.TypeString:
+		flt, err := strconv.ParseFloat(val.String(), 64)
+		if err != nil {
+			return 1.0
+		}
+		return flt
+	}
+	return 1.0
+}
+
+func parseWidth(val js.Value) bag.ScaledPoint {
+	var wd string
+	switch val.Type() {
+	case js.TypeNumber:
+		wd = fmt.Sprintf("%d", val.Int())
+	case js.TypeString:
+		wd = val.String()
+	}
+	if wd == "" {
+		return 10 * bag.Factor
+	}
+	return bag.MustSp(wd + "pt")
 }
 
 func returnGetPositions() js.Func {
@@ -139,23 +195,25 @@ func returnGetPositions() js.Func {
 			fmt.Println("getpositions requires one argument")
 			return nil
 		}
+		settings := node.NewLinebreakSettings()
+
 		firstArg := args[0]
 		text := firstArg.Get("text").String()
-		widthAny := firstArg.Get("width")
-		wd := "240"
-		switch widthAny.Type() {
-		case js.TypeNumber:
-			wd = fmt.Sprintf("%d", widthAny.Int())
-		case js.TypeString:
-			wd = widthAny.String()
-		}
-		g, err := getPositions(text, wd)
+		fontsize := parseWidth(firstArg.Get("fontsize"))
+
+		settings.LineHeight = parseWidth(firstArg.Get("leading"))
+		settings.HSize = parseWidth(firstArg.Get("hsize"))
+		settings.Hyphenpenalty = parseInt(firstArg.Get("hyphenpenalty"))
+		settings.Tolerance = parseFloat(firstArg.Get("tolerance"))
+
+		g, err := getPositions(settings, text, fontsize)
 		if err != nil {
 			panic("this should not happen")
 		}
+
 		x := []any{}
 
-		for _, i := range g {
+		for _, i := range g.positions {
 			obj := map[string]any{
 				"char": i.component,
 				"xpos": i.xpos.ToPT(),
@@ -163,7 +221,11 @@ func returnGetPositions() js.Func {
 			}
 			x = append(x, obj)
 		}
-		return x
+		ret := map[string]any{
+			"positions": x,
+			"height":    g.height.ToPT(),
+		}
+		return ret
 	})
 	return jsFunc
 }
