@@ -55,11 +55,6 @@ func mknodelist(fnt *font.Font, atoms []font.Atom) node.Node {
 			}
 		}
 	}
-	l, err := frontend.GetLanguage("en")
-	if err != nil {
-		return nil
-	}
-	frontend.Hyphenate(head, l)
 	return head
 }
 
@@ -120,7 +115,7 @@ type retinfo struct {
 	height    bag.ScaledPoint
 }
 
-func getPositions(settings *node.LinebreakSettings, text string, fontsize bag.ScaledPoint) (*retinfo, error) {
+func getPositions(settings *node.LinebreakSettings, text string, fontsize bag.ScaledPoint, hyphenate bool) (*retinfo, error) {
 	pdf := baseline.NewPDFWriter(io.Discard)
 	data, err := f.ReadFile("fonts/garamond/CormorantGaramond-Regular.ttf")
 	if err != nil {
@@ -136,6 +131,13 @@ func getPositions(settings *node.LinebreakSettings, text string, fontsize bag.Sc
 
 	atoms := fnt.Shape(text, []harfbuzz.Feature{})
 	nl := mknodelist(fnt, atoms)
+	if hyphenate {
+		l, err := frontend.GetLanguage("en")
+		if err != nil {
+			return nil, nil
+		}
+		frontend.Hyphenate(nl, l)
+	}
 	nl, _ = node.AppendLineEndAfter(nl, node.Tail(nl))
 	vl, _ := node.Linebreak(nl, settings)
 	g := getVPositions(fontsize, vl)
@@ -205,8 +207,9 @@ func returnGetPositions() js.Func {
 		settings.HSize = parseWidth(firstArg.Get("hsize"))
 		settings.Hyphenpenalty = parseInt(firstArg.Get("hyphenpenalty"))
 		settings.Tolerance = parseFloat(firstArg.Get("tolerance"))
+		hyphenate := firstArg.Get("hyphenate").Bool()
 
-		g, err := getPositions(settings, text, fontsize)
+		g, err := getPositions(settings, text, fontsize, hyphenate)
 		if err != nil {
 			panic("this should not happen")
 		}

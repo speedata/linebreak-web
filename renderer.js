@@ -14,9 +14,19 @@ function init() {
         const idname = split[0]
         const field = document.getElementById(idname)
         if (field != null) {
-            field.value = split[1]
+            const value = split[1];
+            field.value = value;
+            switch (idname) {
+                case "hsize":
+                        rangeValue.innerText = value;
+                    break;
+                case "hyphenate":
+                    document.getElementById(idname).checked = (value == "true");
+                    break;
+                default:
+                    break;
+            }
             if (idname == "hsize") {
-                rangeValue.innerText = split[1];
             }
         }
     })
@@ -35,8 +45,9 @@ function drawtext() {
         leading: document.getElementById("leading").value,
         tolerance: document.getElementById("tolerance").value,
         hyphenpenalty: document.getElementById("hyphenpenalty").value,
+        hyphenate: document.getElementById("hyphenate").checked,
     }
-    const items = ["fontsize", "hyphenpenalty", "leading", "hsize", "tolerance"]
+    const items = ["fontsize", "hyphenpenalty", "leading", "hsize", "tolerance","hyphenate"]
     items.forEach(function (item, index) {
         document.cookie = item + "=" + obj[item];
     });

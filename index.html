@@ -1,31 +1,65 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
-    <meta charset="utf-8">
     <title>boxes and glue linebrak tester</title>
-
-    <link rel="stylesheet" href="garamond.css" >
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="garamond.css">
 </head>
 
 <body>
+    <div class="container">
 
-    <div class="slider">
-        <input id="hsize" type="range" min="0" max="800" value="300" oninput="rangeValue.innerText = this.value;drawtext(); ">
-        <p>Horizontal Size: <span id="rangeValue">300</span> pt</p>
+        <h1>boxes and glue linebreak tester</h1>
+        <div class="slider">
+            <input id="hsize" type="range" min="0" max="800" value="300"
+                oninput="rangeValue.innerText = this.value;drawtext(); ">
+            <p>Horizontal Size: <span id="rangeValue">300</span> pt</p>
+        </div>
+        <form>
+            <div class="row mb-3">
+                <div class="col-md-2">
+                    <label for="zoom" class="form-label">Zoom:</label> <input class="form-control" id="zoom"
+                        type="number" value="3" oninput="drawtext()">
+                </div>
+                <div class="col-md-2">
+                    <label for="fontsize" class="form-label" >Font size:</label> <input class="form-control" id="fontsize" type="number" value="10"
+                    oninput="drawtext()">
+                </div>
+                <div class="col-md-2">
+                    <label for="leading" class="form-label">Leading:</label> <input class="form-control" id="leading" type="number" value="12"
+                    oninput="drawtext()">
+                </div>
+                <div class="col-md-2">
+                    <label for="tolerance" class="form-label">Tolerance:</label> <input class="form-control" id="tolerance" type="number" value="4.0"
+                    oninput="drawtext()">
+                </div>
+                <div class="col-md-2">
+                    <label for="hyphenpenalty" class="form-label">Hyphenpenalty:</label> <input class="form-control" id="hyphenpenalty" type="number" value="50"
+                    oninput="drawtext()">
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-mb-2">
+                    <div class="form-check">
+                        <input id="hyphenate" onchange="drawtext()" type="checkbox" class="form-check-input" checked>
+                        <label for="hyphenate" class="form-check-label">Hyphenate</label>
+                    </div>
+                </div>
+            </div>
+                <textarea id="rendertext" class="form-control" rows="3" cols="50"
+                    onkeyup="drawtext()">In olden times when wishing still helped one, there lived a king whose daughters were all beautiful, but the youngest was so beautiful that the sun itself, which has seen so much, was astonished whenever it shone in her face.</textarea>
+                <br>
+                <canvas width="300" height="220" style="border: 1pt solid lightgray;">typeset paragraph</canvas>
+                <br>
+                <button class="btn btn-danger" onclick="clearCookies(); location.reload()">Reset everything</button>
+        </form>
+        <script src="wasm_exec.js"></script>
+        <script src="renderer.js"></script>
+        <script src="/bootstrap/js/bootstrap.bundle.min.js"></script>
     </div>
-    <label for="zoom">Zoom:</label> <input id="zoom" type="number" value="3" oninput="drawtext()"><br>
-    <label for="fontsize">Font size:</label> <input id="fontsize" type="number" value="10" oninput="drawtext()"><br>
-    <label for="leading">Leading:</label> <input id="leading" type="number" value="12" oninput="drawtext()"><br>
-    <label for="tolerance">Tolerance:</label> <input id="tolerance" type="number" value="4.0" oninput="drawtext()"><br>
-    <label for="hyphenpenalty">Hyphenpenalty:</label> <input id="hyphenpenalty" type="number" value="50" oninput="drawtext()"><br>
-    <textarea id="rendertext" rows="10" cols="50" onkeyup="drawtext()">In olden times when wishing still helped one, there lived a king whose daughters were all beautiful, but the youngest was so beautiful that the sun itself, which has seen so much, was astonished whenever it shone in her face.</textarea>
-    <br>
-    <canvas width="300" height="220" style="border: 1pt solid lightgray;">typeset paragraph</canvas>
-    <br>
-    <button onclick="clearCookies(); location.reload()">Reset everything</button>
-    <script src="wasm_exec.js"></script>
-    <script src="renderer.js"></script>
 
 </body>
 
