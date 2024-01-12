@@ -59,6 +59,24 @@ function drawtext() {
     posinfo.positions.forEach(element => {
         ctx.fillText(element.char, element.xpos, element.ypos);
     });
+    var tbl = document.getElementById("rtable");
+    if (tbl != null) {
+        tbl.remove();
+    }
+    var table = document.createElement('table');
+    table.setAttribute("class","table")
+    table.setAttribute("id","rtable")
+    var tablediv = document.getElementById('tablediv');
+    tablediv.append(table)
+
+    posinfo.lines.forEach(function(row) {
+      var tr = table.insertRow(); //Create a new row
+      var tdlinenumber = tr.insertCell();
+      var tdr = tr.insertCell();
+      tdlinenumber.innerText = row.line;
+      tdr.innerText = row.r;
+
+    });
 }
 
 

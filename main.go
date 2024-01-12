@@ -64,6 +64,11 @@ type position struct {
 	ypos      bag.ScaledPoint
 }
 
+type lineinfo struct {
+	linenumber int
+	r          float64
+}
+
 func getVPositions(ypos bag.ScaledPoint, vl node.Node) []position {
 	glyphs := []position{}
 	for e := vl; e != nil; e = e.Next() {
@@ -112,6 +117,7 @@ func getHPositions(ypos bag.ScaledPoint, vl node.Node) []position {
 
 type retinfo struct {
 	positions []position
+	li        []lineinfo
 	height    bag.ScaledPoint
 }
 
@@ -139,12 +145,20 @@ func getPositions(settings *node.LinebreakSettings, text string, fontsize bag.Sc
 		frontend.Hyphenate(nl, l)
 	}
 	nl, _ = node.AppendLineEndAfter(nl, node.Tail(nl))
-	vl, _ := node.Linebreak(nl, settings)
+	vl, breakpoints := node.Linebreak(nl, settings)
+	var lines []lineinfo
+	for i, bp := range breakpoints {
+		lines = append(lines, lineinfo{
+			linenumber: i + 1,
+			r:          bp.R,
+		})
+	}
 	g := getVPositions(fontsize, vl)
 
 	ri := &retinfo{
 		positions: g,
 		height:    vl.Height + vl.Depth,
+		li:        lines,
 	}
 	return ri, nil
 }
@@ -214,7 +228,16 @@ func returnGetPositions() js.Func {
 			panic("this should not happen")
 		}
 
-		x := []any{}
+		charPosition := []any{}
+		lineinfo := []any{}
+
+		for _, l := range g.li {
+			obj := map[string]any{
+				"line": l.linenumber,
+				"r":    l.r,
+			}
+			lineinfo = append(lineinfo, obj)
+		}
 
 		for _, i := range g.positions {
 			obj := map[string]any{
@@ -222,11 +245,12 @@ func returnGetPositions() js.Func {
 				"xpos": i.xpos.ToPT(),
 				"ypos": i.ypos.ToPT(),
 			}
-			x = append(x, obj)
+			charPosition = append(charPosition, obj)
 		}
 		ret := map[string]any{
-			"positions": x,
+			"positions": charPosition,
 			"height":    g.height.ToPT(),
+			"lines":     lineinfo,
 		}
 		return ret
 	})

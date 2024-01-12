@@ -14,9 +14,9 @@
 
         <h1>boxes and glue linebreak tester</h1>
         <div class="slider">
-            <input id="hsize" type="range" min="0" max="800" value="300"
+            <input class="form-range" id="hsize" type="range" min="0" max="600" value="300"
                 oninput="rangeValue.innerText = this.value;drawtext(); ">
-            <p>Horizontal Size: <span id="rangeValue">300</span> pt</p>
+            <p>Horizontal size: <span id="rangeValue">300</span> pt</p>
         </div>
         <form>
             <div class="row mb-3">
@@ -49,18 +49,23 @@
                     </div>
                 </div>
             </div>
-                <textarea id="rendertext" class="form-control" rows="3" cols="50"
-                    onkeyup="drawtext()">In olden times when wishing still helped one, there lived a king whose daughters were all beautiful, but the youngest was so beautiful that the sun itself, which has seen so much, was astonished whenever it shone in her face.</textarea>
-                <br>
-                <canvas width="300" height="220" style="border: 1pt solid lightgray;">typeset paragraph</canvas>
-                <br>
+            <div class="row mb-3" >
+                <textarea id="rendertext" class=" col-md-12 form-control" rows="3" cols="50"
+                    onkeyup="drawtext()">In olden times when wishing still helped one, there lived a king whose daughters were all beautiful, but the youngest was so beautiful that the sun itself, which has seen so much, was astonished whenever it shone in her face.
+                </textarea>
+
+            </div>
+            <canvas width="300" height="220" style="border: 1pt solid lightgray;">typeset paragraph</canvas>
+                <div class="row mb-3">
+                </div>
+            <div id="tablediv" class="row mb-4" >
+            </div>
                 <button class="btn btn-danger" onclick="clearCookies(); location.reload()">Reset everything</button>
         </form>
         <script src="wasm_exec.js"></script>
         <script src="renderer.js"></script>
         <script src="/bootstrap/js/bootstrap.bundle.min.js"></script>
     </div>
-
 </body>
 
 </html>
