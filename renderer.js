@@ -26,8 +26,6 @@ function init() {
                 default:
                     break;
             }
-            if (idname == "hsize") {
-            }
         }
     })
     drawtext();
@@ -39,6 +37,7 @@ function drawtext() {
     canvas.width = hsize * zoom;
     ctx.clearRect(0, 0, hsize, canvas.height);
     var obj = {
+        zoom: document.getElementById("zoom").value,
         text: document.getElementById("rendertext").value,
         hsize: hsize,
         fontsize: document.getElementById("fontsize").value,
@@ -47,7 +46,7 @@ function drawtext() {
         hyphenpenalty: document.getElementById("hyphenpenalty").value,
         hyphenate: document.getElementById("hyphenate").checked,
     }
-    const items = ["fontsize", "hyphenpenalty", "leading", "hsize", "tolerance","hyphenate"]
+    const items = ["fontsize", "hyphenpenalty", "leading", "hsize", "tolerance","hyphenate","zoom"]
     items.forEach(function (item, index) {
         document.cookie = item + "=" + obj[item];
     });
@@ -68,14 +67,31 @@ function drawtext() {
     table.setAttribute("id","rtable")
     var tablediv = document.getElementById('tablediv');
     tablediv.append(table)
-
+    var thead = document.createElement("thead");
+    var headrow = thead.insertRow();
+    var th;
+    ["Line","Adj. ratio","Total demerits","Fitness","Badness"].forEach(function (elt) {
+        th = document.createElement("th");
+        th.innerText = elt;
+        headrow.appendChild(th);
+    })
+    table.appendChild(thead);
     posinfo.lines.forEach(function(row) {
-      var tr = table.insertRow(); //Create a new row
-      var tdlinenumber = tr.insertCell();
-      var tdr = tr.insertCell();
-      tdlinenumber.innerText = row.line;
-      tdr.innerText = row.r;
 
+      var tr = table.insertRow(); //Create a new row
+
+      var tdlinenumber = tr.insertCell();
+      tdlinenumber.innerText = row.line;
+      var td
+      td = tr.insertCell();
+      td.innerText = row.r;
+      td = tr.insertCell();
+      td.innerText = row.demerits;
+      td = tr.insertCell();
+      td.innerText = row.fitness;
+
+      td = tr.insertCell();
+      td.innerText = row.badness;
     });
 }
 

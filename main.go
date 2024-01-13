@@ -5,6 +5,7 @@ import (
 	_ "embed"
 	"fmt"
 	"io"
+	"math"
 	"strconv"
 	"syscall/js"
 
@@ -67,18 +68,24 @@ type position struct {
 type lineinfo struct {
 	linenumber int
 	r          float64
+	demerits   int
+	fitness    int
 }
 
-func getVPositions(ypos bag.ScaledPoint, vl node.Node) []position {
+func getVPositions(ypos bag.ScaledPoint, vl node.Node, level int) ([]position, []int) {
+	var badness []int
+	var g []position
 	glyphs := []position{}
 	for e := vl; e != nil; e = e.Next() {
 		switch t := e.(type) {
 		case *node.VList:
-			g := getVPositions(ypos, t.List)
+			g, badness = getVPositions(ypos, t.List, level+1)
+
 			glyphs = append(glyphs, g...)
 			ypos += t.Height + t.Depth
 		case *node.HList:
-			g := getHPositions(ypos, t.List)
+			g, _ = getHPositions(ypos, t.List, level+1)
+			badness = append(badness, t.Badness)
 			glyphs = append(glyphs, g...)
 			ypos += t.Height + t.Depth
 		case *node.Glue:
@@ -87,19 +94,22 @@ func getVPositions(ypos bag.ScaledPoint, vl node.Node) []position {
 
 		}
 	}
-	return glyphs
+
+	return glyphs, badness
 }
 
-func getHPositions(ypos bag.ScaledPoint, vl node.Node) []position {
+func getHPositions(ypos bag.ScaledPoint, hl node.Node, level int) ([]position, []int) {
 	glyphs := []position{}
+	var g []position
+	var badness []int
 	xpos := bag.ScaledPoint(0)
-	for e := vl; e != nil; e = e.Next() {
+	for e := hl; e != nil; e = e.Next() {
 		switch t := e.(type) {
 		case *node.VList:
-			g := getVPositions(ypos, t.List)
+			g, badness = getVPositions(ypos, t.List, level+1)
 			glyphs = append(glyphs, g...)
 		case *node.HList:
-			g := getHPositions(ypos, t.List)
+			g, badness = getHPositions(ypos, t.List, level+1)
 			glyphs = append(glyphs, g...)
 		case *node.Glue:
 			xpos += t.Width
@@ -112,11 +122,12 @@ func getHPositions(ypos bag.ScaledPoint, vl node.Node) []position {
 			// fmt.Printf("~~> getHPositions %#v\n", t)
 		}
 	}
-	return glyphs
+	return glyphs, badness
 }
 
 type retinfo struct {
 	positions []position
+	badness   []int
 	li        []lineinfo
 	height    bag.ScaledPoint
 }
@@ -150,13 +161,16 @@ func getPositions(settings *node.LinebreakSettings, text string, fontsize bag.Sc
 	for i, bp := range breakpoints {
 		lines = append(lines, lineinfo{
 			linenumber: i + 1,
-			r:          bp.R,
+			r:          math.Round(bp.R*10000.0) / 10000.0,
+			demerits:   bp.Demerits,
+			fitness:    bp.Fitness,
 		})
 	}
-	g := getVPositions(fontsize, vl)
-
+	g, badness := getVPositions(fontsize, vl, 0)
+	_ = badness
 	ri := &retinfo{
 		positions: g,
+		badness:   badness,
 		height:    vl.Height + vl.Depth,
 		li:        lines,
 	}
@@ -231,10 +245,13 @@ func returnGetPositions() js.Func {
 		charPosition := []any{}
 		lineinfo := []any{}
 
-		for _, l := range g.li {
+		for i, l := range g.li {
 			obj := map[string]any{
-				"line": l.linenumber,
-				"r":    l.r,
+				"line":     l.linenumber,
+				"r":        l.r,
+				"demerits": l.demerits,
+				"fitness":  l.fitness,
+				"badness":  g.badness[i],
 			}
 			lineinfo = append(lineinfo, obj)
 		}

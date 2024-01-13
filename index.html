@@ -7,12 +7,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="/bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="garamond.css">
+    <style>
+        td,th {
+            font-feature-settings: 'tnum' 1;
+            text-align: right;
+        }
+    </style>
 </head>
 
 <body>
     <div class="container">
 
         <h1>boxes and glue linebreak tester</h1>
+        <p><a href="https://github.com/speedata/linebreak-web">More info? See the <img style="padding-bottom: 3px;" src="https://github.githubassets.com/assets/GitHub-Mark-ea2971cee799.png" height="25px"> repository</a></p>
         <div class="slider">
             <input class="form-range" id="hsize" type="range" min="0" max="600" value="300"
                 oninput="rangeValue.innerText = this.value;drawtext(); ">
