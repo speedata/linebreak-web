@@ -49,10 +49,22 @@
                 </div>
             </div>
             <div class="row mb-3">
-                <div class="col-mb-2">
+                <div class="col-md-2">
+                    <label for="demeritsfitness" class="form-label">Demerits fitness:</label>
+                    <input id="demeritsfitness" class="form-control" type="number" value="100" oninput="drawtext()">
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-md-2">
                     <div class="form-check">
                         <input id="hyphenate" onchange="drawtext()" type="checkbox" class="form-check-input" checked>
                         <label for="hyphenate" class="form-check-label">Hyphenate</label>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-check">
+                        <input id="squeezeoverfullboxes" onchange="drawtext()" type="hidden" class="form-check-input" >
+                        <!-- <label for="squeezeoverfullboxes" class="form-check-label">Squeeze overfull lines</label> -->
                     </div>
                 </div>
             </div>

@@ -18,9 +18,12 @@ function init() {
             field.value = value;
             switch (idname) {
                 case "hsize":
-                        rangeValue.innerText = value;
+                    rangeValue.innerText = value;
                     break;
                 case "hyphenate":
+                    document.getElementById(idname).checked = (value == "true");
+                    break;
+                case "squeezeoverfullboxes":
                     document.getElementById(idname).checked = (value == "true");
                     break;
                 default:
@@ -34,64 +37,85 @@ function init() {
 function drawtext() {
     var zoom = document.getElementById("zoom").value;
     var hsize = document.getElementById("hsize").value
-    canvas.width = hsize * zoom;
+    canvas.width = hsize * zoom * 1.3;
     ctx.clearRect(0, 0, hsize, canvas.height);
     var obj = {
-        zoom: document.getElementById("zoom").value,
-        text: document.getElementById("rendertext").value,
-        hsize: hsize,
+        demeritsfitness: document.getElementById("demeritsfitness").value,
         fontsize: document.getElementById("fontsize").value,
-        leading: document.getElementById("leading").value,
-        tolerance: document.getElementById("tolerance").value,
-        hyphenpenalty: document.getElementById("hyphenpenalty").value,
+        hsize: hsize,
         hyphenate: document.getElementById("hyphenate").checked,
+        squeezeoverfullboxes: document.getElementById("squeezeoverfullboxes").checked,
+        hyphenpenalty: document.getElementById("hyphenpenalty").value,
+        leading: document.getElementById("leading").value,
+        text: document.getElementById("rendertext").value,
+        tolerance: document.getElementById("tolerance").value,
+        zoom: document.getElementById("zoom").value,
     }
-    const items = ["fontsize", "hyphenpenalty", "leading", "hsize", "tolerance","hyphenate","zoom"]
+    const items = [
+        "demeritsfitness",
+        "fontsize",
+        "hsize",
+        "hyphenate",
+        "hyphenpenalty",
+        "leading",
+        "squeezeoverfullboxes",
+        "tolerance",
+        "zoom",
+    ]
     items.forEach(function (item, index) {
         document.cookie = item + "=" + obj[item];
     });
     var posinfo = getpositions(obj);
     canvas.height = posinfo.height * zoom;
+
     var fnt = obj.fontsize + "px Garamond";
     ctx.font = fnt
     ctx.scale(zoom, zoom);
+
     posinfo.positions.forEach(element => {
         ctx.fillText(element.char, element.xpos, element.ypos);
     });
+
+    ctx.lineWidth = 0.2;
+    ctx.beginPath();
+    ctx.moveTo(hsize, 0);
+    ctx.lineTo(hsize, canvas.height);
+    ctx.stroke();
+
     var tbl = document.getElementById("rtable");
     if (tbl != null) {
         tbl.remove();
     }
     var table = document.createElement('table');
-    table.setAttribute("class","table")
-    table.setAttribute("id","rtable")
+    table.setAttribute("class", "table table-sm")
+    table.setAttribute("id", "rtable")
     var tablediv = document.getElementById('tablediv');
     tablediv.append(table)
     var thead = document.createElement("thead");
     var headrow = thead.insertRow();
     var th;
-    ["Line","Adj. ratio","Total demerits","Fitness","Badness"].forEach(function (elt) {
+    ["Line", "Adj. ratio", "Total demerits", "Fitness", "Badness"].forEach(function (elt) {
         th = document.createElement("th");
         th.innerText = elt;
         headrow.appendChild(th);
     })
     table.appendChild(thead);
-    posinfo.lines.forEach(function(row) {
+    posinfo.lines.forEach(function (row) {
 
-      var tr = table.insertRow(); //Create a new row
+        var tr = table.insertRow(); //Create a new row
 
-      var tdlinenumber = tr.insertCell();
-      tdlinenumber.innerText = row.line;
-      var td
-      td = tr.insertCell();
-      td.innerText = row.r;
-      td = tr.insertCell();
-      td.innerText = row.demerits;
-      td = tr.insertCell();
-      td.innerText = row.fitness;
+        var tdlinenumber = tr.insertCell();
+        tdlinenumber.innerText = row.line;
+        var td
+        td = tr.insertCell();
+        td.innerText = row.r;
+        td = tr.insertCell();
+        td.innerText = row.demerits;
+        td = tr.insertCell();
+        td.innerText = row.fitness;
 
-      td = tr.insertCell();
-      td.innerText = row.badness;
+        td = tr.insertCell();
+        td.innerText = row.badness;
     });
 }
 

@@ -234,8 +234,11 @@ func returnGetPositions() js.Func {
 		settings.LineHeight = parseWidth(firstArg.Get("leading"))
 		settings.HSize = parseWidth(firstArg.Get("hsize"))
 		settings.Hyphenpenalty = parseInt(firstArg.Get("hyphenpenalty"))
+		settings.DemeritsFitness = parseInt(firstArg.Get("demeritsfitness"))
+
 		settings.Tolerance = parseFloat(firstArg.Get("tolerance"))
 		hyphenate := firstArg.Get("hyphenate").Bool()
+		settings.SqueezeOverfullBoxes = firstArg.Get("squeezeoverfullboxes").Bool()
 
 		g, err := getPositions(settings, text, fontsize, hyphenate)
 		if err != nil {
