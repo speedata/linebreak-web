@@ -26,6 +26,9 @@ function init() {
                 case "squeezeoverfullboxes":
                     document.getElementById(idname).checked = (value == "true");
                     break;
+                case "hangingpunctuationend":
+                    document.getElementById(idname).checked = (value == "true");
+                    break;
                 default:
                     break;
             }
@@ -45,6 +48,7 @@ function drawtext() {
         hsize: hsize,
         hyphenate: document.getElementById("hyphenate").checked,
         squeezeoverfullboxes: document.getElementById("squeezeoverfullboxes").checked,
+        hangingpunctuationend: document.getElementById("hangingpunctuationend").checked,
         hyphenpenalty: document.getElementById("hyphenpenalty").value,
         leading: document.getElementById("leading").value,
         text: document.getElementById("rendertext").value,
@@ -59,6 +63,7 @@ function drawtext() {
         "hyphenpenalty",
         "leading",
         "squeezeoverfullboxes",
+        "hangingpunctuationend",
         "tolerance",
         "zoom",
     ]

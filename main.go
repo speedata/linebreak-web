@@ -9,12 +9,12 @@ import (
 	"strconv"
 	"syscall/js"
 
-	baseline "github.com/speedata/baseline-pdf"
-	"github.com/speedata/boxesandglue/backend/bag"
-	"github.com/speedata/boxesandglue/backend/font"
-	"github.com/speedata/boxesandglue/backend/node"
-	"github.com/speedata/boxesandglue/frontend"
-	"github.com/speedata/textlayout/harfbuzz"
+	baseline "github.com/boxesandglue/baseline-pdf"
+	"github.com/boxesandglue/boxesandglue/backend/bag"
+	"github.com/boxesandglue/boxesandglue/backend/font"
+	"github.com/boxesandglue/boxesandglue/backend/node"
+	"github.com/boxesandglue/boxesandglue/frontend"
+	"github.com/boxesandglue/textlayout/harfbuzz"
 )
 
 //go:embed fonts/garamond/CormorantGaramond-Regular.ttf
@@ -239,6 +239,7 @@ func returnGetPositions() js.Func {
 		settings.Tolerance = parseFloat(firstArg.Get("tolerance"))
 		hyphenate := firstArg.Get("hyphenate").Bool()
 		settings.SqueezeOverfullBoxes = firstArg.Get("squeezeoverfullboxes").Bool()
+		settings.HangingPunctuationEnd = firstArg.Get("hangingpunctuationend").Bool()
 
 		g, err := getPositions(settings, text, fontsize, hyphenate)
 		if err != nil {
