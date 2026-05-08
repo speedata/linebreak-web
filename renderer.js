@@ -9,6 +9,9 @@ const canvas = document.querySelector("canvas");
 const ctx = canvas.getContext("2d");
 
 function init() {
+    if (window.matchMedia("(max-width: 768px)").matches) {
+        document.getElementById("zoom").value = 1;
+    }
     document.cookie.split("; ").forEach(function (elt) {
         const split = elt.split("=");
         const idname = split[0]
@@ -34,7 +37,7 @@ function init() {
             }
         }
     })
-    drawtext();
+    document.fonts.load("10pt Garamond").then(drawtext);
 }
 
 function drawtext() {
