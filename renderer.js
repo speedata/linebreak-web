@@ -44,6 +44,7 @@ function drawtext() {
     ctx.clearRect(0, 0, hsize, canvas.height);
     var obj = {
         demeritsfitness: document.getElementById("demeritsfitness").value,
+        emergencystretch: document.getElementById("emergencystretch").value,
         fontsize: document.getElementById("fontsize").value,
         hsize: hsize,
         hyphenate: document.getElementById("hyphenate").checked,
@@ -57,6 +58,7 @@ function drawtext() {
     }
     const items = [
         "demeritsfitness",
+        "emergencystretch",
         "fontsize",
         "hsize",
         "hyphenate",
@@ -92,7 +94,6 @@ function drawtext() {
         tbl.remove();
     }
     var table = document.createElement('table');
-    table.setAttribute("class", "table table-sm")
     table.setAttribute("id", "rtable")
     var tablediv = document.getElementById('tablediv');
     tablediv.append(table)

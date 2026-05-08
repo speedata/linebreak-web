@@ -14,7 +14,6 @@ import (
 	"github.com/boxesandglue/boxesandglue/backend/font"
 	"github.com/boxesandglue/boxesandglue/backend/node"
 	"github.com/boxesandglue/boxesandglue/frontend"
-	"github.com/boxesandglue/textlayout/harfbuzz"
 )
 
 //go:embed fonts/garamond/CormorantGaramond-Regular.ttf
@@ -139,14 +138,14 @@ func getPositions(settings *node.LinebreakSettings, text string, fontsize bag.Sc
 		return nil, err
 	}
 
-	face, err := baseline.NewFaceFromData(pdf, data, 0)
+	face, err := pdf.NewFaceFromData(data, 0)
 	if err != nil {
 		return nil, err
 	}
 
 	fnt := font.NewFont(face, fontsize)
 
-	atoms := fnt.Shape(text, []harfbuzz.Feature{})
+	atoms := fnt.Shape(text, nil, nil)
 	nl := mknodelist(fnt, atoms)
 	if hyphenate {
 		l, err := frontend.GetLanguage("en")
@@ -216,7 +215,7 @@ func parseWidth(val js.Value) bag.ScaledPoint {
 	if wd == "" {
 		return 10 * bag.Factor
 	}
-	return bag.MustSp(wd + "pt")
+	return bag.MustSP(wd + "pt")
 }
 
 func returnGetPositions() js.Func {
@@ -235,6 +234,7 @@ func returnGetPositions() js.Func {
 		settings.HSize = parseWidth(firstArg.Get("hsize"))
 		settings.Hyphenpenalty = parseInt(firstArg.Get("hyphenpenalty"))
 		settings.DemeritsFitness = parseInt(firstArg.Get("demeritsfitness"))
+		settings.EmergencyStretch = parseWidth(firstArg.Get("emergencystretch"))
 
 		settings.Tolerance = parseFloat(firstArg.Get("tolerance"))
 		hyphenate := firstArg.Get("hyphenate").Bool()

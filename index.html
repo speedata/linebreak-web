@@ -2,94 +2,110 @@
 <html lang="en">
 
 <head>
-    <title>boxes and glue linebrak tester</title>
+    <title>boxes &amp; glue · linebreak tester</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="garamond.css">
-    <style>
-        td,th {
-            font-feature-settings: 'tnum' 1;
-            text-align: right;
-        }
-    </style>
 </head>
 
 <body>
     <div class="container">
+        <header>
+            <img src="logo.png" alt="boxes &amp; glue" class="logo">
+            <p class="tagline">linebreak tester</p>
+            <a class="repo-link" href="https://github.com/speedata/linebreak-web">
+                <img src="https://github.githubassets.com/assets/GitHub-Mark-ea2971cee799.png" alt="GitHub">
+                <span>More info? See the repository</span>
+            </a>
+        </header>
 
-        <h1>boxes and glue linebreak tester</h1>
-        <p><a href="https://github.com/speedata/linebreak-web">More info? See the <img style="padding-bottom: 3px;" src="https://github.githubassets.com/assets/GitHub-Mark-ea2971cee799.png" height="25px"> repository</a></p>
-        <div class="slider">
-            <input class="form-range" id="hsize" type="range" min="0" max="600" value="300"
-                oninput="rangeValue.innerText = this.value;drawtext(); ">
-            <p>Horizontal size: <span id="rangeValue">300</span> pt</p>
-        </div>
         <form>
-            <div class="row mb-3">
-                <div class="col-md-2">
-                    <label for="zoom" class="form-label">Zoom:</label> <input class="form-control" id="zoom"
-                        type="number" value="3" oninput="drawtext()">
-                </div>
-                <div class="col-md-2">
-                    <label for="fontsize" class="form-label" >Font size:</label> <input class="form-control" id="fontsize" type="number" value="10"
-                    oninput="drawtext()">
-                </div>
-                <div class="col-md-2">
-                    <label for="leading" class="form-label">Leading:</label> <input class="form-control" id="leading" type="number" value="12"
-                    oninput="drawtext()">
-                </div>
-                <div class="col-md-2">
-                    <label for="tolerance" class="form-label">Tolerance:</label> <input class="form-control" id="tolerance" type="number" value="4.0"
-                    oninput="drawtext()">
-                </div>
-                <div class="col-md-2">
-                    <label for="hyphenpenalty" class="form-label">Hyphenpenalty:</label> <input class="form-control" id="hyphenpenalty" type="number" value="50"
-                    oninput="drawtext()">
+            <div class="card">
+                <div class="range-row">
+                    <label for="hsize">Horizontal size</label>
+                    <input id="hsize" type="range" min="0" max="600" value="300"
+                        oninput="rangeValue.innerText = this.value; drawtext();">
+                    <span class="value"><span id="rangeValue">300</span> pt</span>
                 </div>
             </div>
-            <div class="row mb-3">
-                <div class="col-md-2">
-                    <label for="demeritsfitness" class="form-label">Demerits fitness:</label>
-                    <input id="demeritsfitness" class="form-control" type="number" value="100" oninput="drawtext()">
-                </div>
-            </div>
-            <div class="row mb-3">
-                <div class="col-md-2">
-                    <div class="form-check">
-                        <input id="hyphenate" onchange="drawtext()" type="checkbox" class="form-check-input" checked>
-                        <label for="hyphenate" class="form-check-label">Hyphenate</label>
-                    </div>
-                </div>
-                <div class="col-md-2">
-                    <div class="form-check">
-                        <input id="squeezeoverfullboxes" onchange="drawtext()" type="checkbox" class="form-check-input" >
-                        <label for="squeezeoverfullboxes" class="form-check-label">Squeeze overfull lines</label>
-                    </div>
-                </div>
-                <div class="col-md-2">
-                    <div class="form-check">
-                        <input id="hangingpunctuationend" onchange="drawtext()" type="checkbox" class="form-check-input" >
-                        <label for="hangingpunctuationend" class="form-check-label">Hanging punctuation</label>
-                    </div>
-                </div>
-            </div>
-            <div class="row mb-3" >
-                <textarea id="rendertext" class=" col-md-12 form-control" rows="3" cols="50"
-                    onkeyup="drawtext()">In olden times when wishing still helped one, there lived a king whose daughters were all beautiful, but the youngest was so beautiful that the sun itself, which has seen so much, was astonished whenever it shone in her face.
-                </textarea>
 
-            </div>
-            <canvas width="300" height="220" style="border: 1pt solid lightgray;">typeset paragraph</canvas>
-                <div class="row mb-3">
+            <div class="card">
+                <div class="fields">
+                    <div class="field">
+                        <label for="zoom">Zoom</label>
+                        <input id="zoom" type="number" value="3" oninput="drawtext()">
+                    </div>
+                    <div class="field">
+                        <label for="fontsize">Font size</label>
+                        <div class="input-unit">
+                            <input id="fontsize" type="number" value="10" oninput="drawtext()">
+                            <span class="unit">pt</span>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label for="leading">Leading</label>
+                        <div class="input-unit">
+                            <input id="leading" type="number" value="12" oninput="drawtext()">
+                            <span class="unit">pt</span>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label for="tolerance">Tolerance</label>
+                        <input id="tolerance" type="number" value="4.0" oninput="drawtext()">
+                    </div>
+                    <div class="field">
+                        <label for="hyphenpenalty">Hyphen penalty</label>
+                        <input id="hyphenpenalty" type="number" value="50" oninput="drawtext()">
+                    </div>
+                    <div class="field">
+                        <label for="demeritsfitness">Demerits fitness</label>
+                        <input id="demeritsfitness" type="number" value="100" oninput="drawtext()">
+                    </div>
+                    <div class="field">
+                        <label for="emergencystretch">Emergency stretch</label>
+                        <div class="input-unit">
+                            <input id="emergencystretch" type="number" value="0" min="0" step="1" oninput="drawtext()">
+                            <span class="unit">pt</span>
+                        </div>
+                    </div>
                 </div>
-            <div id="tablediv" class="row mb-4" >
             </div>
-                <button class="btn btn-danger" onclick="clearCookies(); location.reload()">Reset everything</button>
+
+            <div class="card">
+                <div class="toggles">
+                    <label class="toggle">
+                        <input id="hyphenate" type="checkbox" onchange="drawtext()" checked>
+                        Hyphenate
+                    </label>
+                    <label class="toggle">
+                        <input id="squeezeoverfullboxes" type="checkbox" onchange="drawtext()">
+                        Squeeze overfull lines
+                    </label>
+                    <label class="toggle">
+                        <input id="hangingpunctuationend" type="checkbox" onchange="drawtext()">
+                        Hanging punctuation
+                    </label>
+                </div>
+            </div>
+
+            <div class="card">
+                <textarea id="rendertext" rows="3" onkeyup="drawtext()">In olden times when wishing still helped one, there lived a king whose daughters were all beautiful, but the youngest was so beautiful that the sun itself, which has seen so much, was astonished whenever it shone in her face.</textarea>
+            </div>
+
+            <div class="canvas-wrap">
+                <canvas width="300" height="220">typeset paragraph</canvas>
+            </div>
+
+            <div class="card" id="tablediv"></div>
+
+            <div class="actions">
+                <button type="button" class="btn-reset" onclick="clearCookies(); location.reload()">Reset everything</button>
+            </div>
         </form>
+
         <script src="wasm_exec.js"></script>
         <script src="renderer.js"></script>
-        <script src="/bootstrap/js/bootstrap.bundle.min.js"></script>
     </div>
 </body>
 
