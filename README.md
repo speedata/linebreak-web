@@ -1,32 +1,27 @@
 # linebreak-web
 
-**This is purely experimental!**
+A playground for the line breaking algorithm of [boxes and glue](https://github.com/boxesandglue/boxesandglue).
 
 ## About
 
-This is a playground for boxes and glue's line breaking algorithm.
+linebreak-web typesets a paragraph with boxes and glue and draws the result on an HTML canvas. Sliders and fields change the line width, font size, leading, tolerance, hyphen penalty, fitness demerits and emergency stretch, and switches turn hyphenation, squeezing of overfull lines and hanging punctuation on and off. Every change typesets the paragraph again, so you see at once how a parameter moves the line breaks.
 
-I'd like to have a visual test for the line breaking algorithm of boxes and glue, so I render the result to an HTML canvas.
+It is a test bed, not a finished tool: the controls follow what is being worked on in boxes and glue.
 
-There will be more bells and whistles following, but I need a first commit, so here it is.
+## Running
 
-## Running / compiling
-
-You need a Go compiler
+You need a Go compiler.
 
     # build
     GOARCH=wasm GOOS=js go build -o linebreak.wasm
-    # serve:
+    # serve
     python3 -m http.server
-    # open localhost:8000 and then open index.html
+    # open http://localhost:8000/ in a browser
 
 ## Technique
 
-I use a small Go layer to the boxes and glue library (also written in Go) and compile it to [Web Assembly (wasm)](https://en.wikipedia.org/wiki/WebAssembly). There is a small JavaScript interface to the Web Assembly program.
-
+A small Go layer calls the boxes and glue library and is compiled to [WebAssembly](https://en.wikipedia.org/wiki/WebAssembly). A short JavaScript interface passes the settings to it and draws each glyph at the position it returns.
 
 ## Thanks
 
-Many thanks to Didier Verna for [etap](https://github.com/didierverna/etap) that inspired me to create this. etap is far (yes far!) more advanced.
-
-
+Many thanks to Didier Verna for [etap](https://github.com/didierverna/etap), which inspired this playground. etap is far more advanced.
